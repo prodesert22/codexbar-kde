@@ -24,6 +24,10 @@ QQC2.ScrollView {
                     var entry = root.providerCostEntry(providerCard.modelData)
                     return entry ? "$ " + entry : ""
                 }
+                readonly property string statusIndicator: {
+                    var s = providerCard.modelData.status
+                    return (s && s.indicator) ? s.indicator : ""
+                }
                 Layout.fillWidth: true
                 spacing: Kirigami.Units.smallSpacing
                 clip: true
@@ -46,19 +50,12 @@ QQC2.ScrollView {
                     }
 
                     PlasmaComponents3.Label {
-                        visible: providerCard.modelData.status !== undefined
-                        text: {
-                            var s = providerCard.modelData.status
-                            if (s && s.indicator === "none") return "●"
-                            if (s && s.indicator === "minor") return "●"
-                            if (s && s.indicator === "major") return "●"
-                            return ""
-                        }
+                        visible: providerCard.statusIndicator !== ""
+                        text: "●"
                         color: {
-                            var s = providerCard.modelData.status
-                            if (s && s.indicator === "none") return "#30d158"
-                            if (s && s.indicator === "minor") return "#ff9f0a"
-                            if (s && s.indicator === "major") return "#ff453a"
+                            if (providerCard.statusIndicator === "none") return "#30d158"
+                            if (providerCard.statusIndicator === "minor") return "#ff9f0a"
+                            if (providerCard.statusIndicator === "major") return "#ff453a"
                             return "transparent"
                         }
                     }

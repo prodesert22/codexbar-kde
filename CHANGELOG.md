@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.1 (2026-06-11)
+
+### Fixed
+- Deduplicated `compactLabel` percentage extraction into `compactLabelPct()` function
+- `settingsOk()` now delegates to `settingsApply()` instead of duplicating logic
+- Removed redundant `Layout.preferredWidth: implicitWidth` on compact bar
+- Provider status indicator deduplicated via `statusIndicator` property
+- Fragile codexbar binary test now skips gracefully when CLI not installed
+- Indentation normalized after QML file split
+
+### Changed
+- `main.qml` split into 5 focused files: `FullPopup.qml`, `SettingsPage.qml`, `UsagePage.qml`, `UsageBar.qml`
+
 ## 0.1.0 (2026-06-11)
 
 Initial release.

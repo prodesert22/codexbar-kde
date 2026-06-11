@@ -104,10 +104,8 @@ PlasmoidItem {
     }
 
     function settingsOk() {
-        flushPendingChanges()
-        settingsDirty = false
+        settingsApply()
         showSettings = false
-        refresh()
     }
 
     function settingsApply() {
@@ -215,6 +213,19 @@ PlasmoidItem {
         return "#0a84ff"
     }
 
+    function compactLabelPct() {
+        var pinned = root.summary.barProvider || ""
+        if (pinned) {
+            var providers = root.summary.providers || []
+            for (var i = 0; i < providers.length; i++) {
+                if (providers[i].provider === pinned) {
+                    return providers[i].maxPercent || 0
+                }
+            }
+        }
+        return root.summary.percentage || 0
+    }
+
     function providerCostEntry(usageEntry) {
         if (!usageEntry || !usageEntry.provider) return null
         var items = root.cost.cost || []
@@ -303,8 +314,6 @@ PlasmoidItem {
         implicitWidth: compactRow.implicitWidth + Kirigami.Units.smallSpacing * 2
         implicitHeight: Math.max(Kirigami.Units.iconSizes.smallMedium, compactLabel.implicitHeight) + Kirigami.Units.smallSpacing * 2
 
-        Layout.preferredWidth: implicitWidth
-
         clip: true
 
         Rectangle {
@@ -334,37 +343,10 @@ PlasmoidItem {
                 wrapMode: Text.NoWrap
                 elide: Text.ElideRight
                 color: {
-                    var pct = 0
-                    var pinned = root.summary.barProvider || ""
-                    if (pinned) {
-                        var providers = root.summary.providers || []
-                        for (var i = 0; i < providers.length; i++) {
-                            if (providers[i].provider === pinned) {
-                                pct = providers[i].maxPercent || 0
-                                break
-                            }
-                        }
-                    }
-                    if (!pct) pct = root.summary.percentage || 0
-                    if (pct >= 90) return "#ff453a"
-                    if (pct >= 70) return "#ff9f0a"
-                    return Kirigami.Theme.textColor
+                    var pct = compactLabelPct()
+                    return pct < 70 ? Kirigami.Theme.textColor : root.levelColor(pct)
                 }
-                font.bold: {
-                    var pct = 0
-                    var pinned = root.summary.barProvider || ""
-                    if (pinned) {
-                        var providers = root.summary.providers || []
-                        for (var i = 0; i < providers.length; i++) {
-                            if (providers[i].provider === pinned) {
-                                pct = providers[i].maxPercent || 0
-                                break
-                            }
-                        }
-                    }
-                    if (!pct) pct = root.summary.percentage || 0
-                    return pct >= 90
-                }
+                font.bold: compactLabelPct() >= 90
             }
         }
 
