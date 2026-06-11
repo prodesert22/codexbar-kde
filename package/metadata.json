@@ -1,0 +1,19 @@
+{
+  "KPlugin": {
+    "Authors": [
+      {
+        "Name": "CodexBar KDE contributors"
+      }
+    ],
+    "Category": "System Information",
+    "Description": "Show CodexBar AI provider usage in a KDE Plasma panel.",
+    "Icon": "codexbar",
+    "Id": "dev.codexbar.kde",
+    "License": "MIT",
+    "Name": "CodexBar KDE",
+    "Version": "0.1.0",
+    "Website": "https://github.com/steipete/CodexBar"
+  },
+  "KPackageStructure": "Plasma/Applet",
+  "X-Plasma-API-Minimum-Version": "6.0"
+}

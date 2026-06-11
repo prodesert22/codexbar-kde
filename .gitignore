@@ -1,0 +1,35 @@
+# Build artifacts
+*.tar.gz
+*.tar.xz
+*.tar.zst
+src/
+pkg/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Testing
+.cache/
+.pytest_cache/
+
+# KDE plasmoid install artifacts
+*.plasmoid
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+/tmp/
+*.swp
+*.swo
+*~
