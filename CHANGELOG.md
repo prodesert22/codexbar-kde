@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.2 (2026-06-11)
+
+### Added
+- GitHub Actions CI (`.github/workflows/ci.yml`): runs on push/PR to `master`.
+  - `tests` job — matrix over Python 3.10–3.13 (parallel jobs), each running
+    `pytest -n auto` to parallelize test methods across CPU cores.
+  - `qmllint` job — Qt6 QML syntax/structure check.
+- `requirements-dev.txt` — test-only dev deps (`pytest`, `pytest-xdist`).
+  Runtime helper stays stdlib-only.
+
+### Changed
+- `scripts/test.sh` now prefers `pytest -n auto` for parallel runs, falling
+  back to stdlib `unittest` when pytest is not installed.
+
 ## 0.1.1 (2026-06-11)
 
 ### Fixed

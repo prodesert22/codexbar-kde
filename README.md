@@ -6,6 +6,12 @@
 
 KDE Plasma 6 panel widget that shows your AI provider usage limits right in the desktop bar. Powered by the [CodexBar](https://github.com/steipete/CodexBar) CLI.
 
+<p align="center">
+  <a href="https://github.com/prodesert22/codexbar-kde/actions/workflows/ci.yml">
+    <img src="https://github.com/prodesert22/codexbar-kde/actions/workflows/ci.yml/badge.svg" alt="CI">
+  </a>
+</p>
+
 ---
 
 ## Install
@@ -87,9 +93,14 @@ python3 package/contents/code/codexbar_kde.py summary
 python3 package/contents/code/codexbar_kde.py settings
 python3 package/contents/code/codexbar_kde.py state
 
-# Run tests
+# Run tests (pytest -n auto in parallel; falls back to unittest)
 ./scripts/test.sh
+
+# Parallel runs need the dev deps once:
+pip install -r requirements-dev.txt
 ```
+
+Tests also run in CI on every push/PR — see [docs/development.md](docs/development.md).
 
 Errors in the widget show "An error occurred." with a copyable traceback.
 

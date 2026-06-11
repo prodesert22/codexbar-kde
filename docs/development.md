@@ -56,8 +56,25 @@ Separation keeps QML simple and makes the logic testable without KDE.
 ```
 
 This runs:
-- Python unit tests (`python3 -m unittest`)
+- Python unit tests — `pytest -n auto` (parallel) when available, else stdlib `python3 -m unittest`
 - QML lint (`qmllint`)
+
+For parallel local runs, install the dev tooling once:
+
+```bash
+pip install -r requirements-dev.txt   # pytest + pytest-xdist
+```
+
+The tests are plain `unittest.TestCase`, so they run under either runner
+unchanged. The runtime helper stays stdlib-only — pytest is test-only.
+
+### Continuous integration
+
+`.github/workflows/ci.yml` runs on every push/PR to `master`:
+- **tests** — matrix over Python 3.10–3.13 (parallel jobs); each runs
+  `pytest -n auto` to parallelize test methods across CPU cores.
+- **qmllint** — Qt6 `qmllint` syntax/structure check (Plasma/Kirigami
+  imports are unresolved in CI and intentionally not fatal).
 
 ### Adding tests
 

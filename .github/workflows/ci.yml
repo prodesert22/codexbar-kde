@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+# Cancel superseded runs on the same ref to save minutes.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Python unit tests. The version matrix entries run as parallel jobs;
+  # pytest-xdist (`-n auto`) parallelizes the test methods within each job.
+  tests:
+    name: pytest (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dev dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests (parallel)
+        run: pytest tests/ -n auto -q
+
+  # QML lint. Runs without a full Plasma/Kirigami install, so unresolved
+  # KDE imports are expected — this gate catches QML syntax/structure errors.
+  qmllint:
+    name: qmllint
+    runs-on: ubuntu-latest
+    # Advisory: CI has no Plasma/Kirigami QML modules, so qmllint cannot
+    # resolve KDE imports and will report them. Surfaced for visibility but
+    # not allowed to fail the build. Strict lint runs locally (scripts/test.sh)
+    # on a real KDE box where the modules resolve.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt6 qmllint
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qt6-declarative-dev-tools
+
+      - name: Lint QML
+        run: |
+          # Qt6 installs qmllint under /usr/lib/qt6/bin, which is not on PATH.
+          QMLLINT="$(command -v qmllint6 || command -v qmllint || true)"
+          if [ -z "$QMLLINT" ]; then
+            QMLLINT="$(find /usr/lib/qt6 /usr/lib/x86_64-linux-gnu/qt6 \
+              -name 'qmllint*' -type f 2>/dev/null | head -n1 || true)"
+          fi
+          if [ -z "$QMLLINT" ]; then
+            echo "qmllint not found; skipping QML lint."
+            exit 0
+          fi
+          echo "Using: $QMLLINT"
+          # Advisory only — KDE imports are unresolvable in CI, so never fail.
+          "$QMLLINT" \
+            package/contents/ui/main.qml \
+            package/contents/ui/UsageBar.qml || true
