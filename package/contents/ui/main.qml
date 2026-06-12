@@ -69,7 +69,20 @@ PlasmoidItem {
         runHelper("set-provider --provider " + providerId + " --enabled " + (enabled ? "true" : "false"))
     }
 
+    // Keys that change which data is pulled over the network — these need a
+    // full (slow) summary refetch on apply.
+    readonly property var _networkKeys: ["allAccounts", "statusPages", "noCredits"]
+    // Keys that only change how already-cached data is rendered by the helper.
+    // The popup card list (root.summary.providers) is ordered, and the bar
+    // text is picked, in Python (summarize/_sort_by_order/bar_text), so these
+    // need a fast, local cache recompute (no network) to re-render.
+    readonly property var _recomputeKeys: ["barProvider", "providerOrder"]
+    // Everything else (showBarText, showAccountEmail, …) is pure QML display,
+    // already live via the optimistic write below.
+
     function saveStateKey(key, value) {
+        // Changes stay pending until the user presses OK/Apply — they must not
+        // affect the live bar before then.
         _pendingChanges[key] = value
         settingsDirty = true
     }
@@ -109,13 +122,45 @@ PlasmoidItem {
     }
 
     function settingsApply() {
+        // Snapshot the pending keys before flush clears the map.
+        var keys = Object.keys(_pendingChanges)
+        var needsRefetch = keys.some(function(k) {
+            return root._networkKeys.indexOf(k) !== -1
+        })
+        var needsRecompute = keys.some(function(k) {
+            return root._recomputeKeys.indexOf(k) !== -1
+        })
+
+        // Apply the pending values to root.settings locally so display-only
+        // bindings (bar text, email visibility, …) update the instant Apply is
+        // pressed — no CLI round-trip. Reassign a fresh object so bindings
+        // re-evaluate; coerce "true"/"false" to bool to match the helper's
+        // settings payload types (settings_payload in codexbar_kde.py).
+        var s = Object.assign({}, root.settings)
+        for (var i = 0; i < keys.length; i++) {
+            var k = keys[i]
+            var v = _pendingChanges[k]
+            if (v === "true") s[k] = true
+            else if (v === "false") s[k] = false
+            else s[k] = v
+        }
+        root.settings = s
+
         flushPendingChanges()
         settingsDirty = false
-        refresh()
+
+        // Only hit the network when a fetched-data key changed; otherwise a
+        // fast local cache recompute covers bar-text/ordering changes, and
+        // pure-display changes need nothing further.
+        if (needsRefetch) refresh()
+        else if (needsRecompute) loadCache()
     }
 
     function settingsCancel() {
+        // Discard pending changes; root.settings was never touched, so the
+        // live bar is already correct.
         _pendingChanges = {}
+        settingsDirty = false
         showSettings = false
     }
 
@@ -313,6 +358,12 @@ PlasmoidItem {
     compactRepresentation: Item {
         implicitWidth: compactRow.implicitWidth + Kirigami.Units.smallSpacing * 2
         implicitHeight: Math.max(Kirigami.Units.iconSizes.smallMedium, compactLabel.implicitHeight) + Kirigami.Units.smallSpacing * 2
+
+        // Make the panel slot track the content width at runtime. Without
+        // these, Plasma reads implicitWidth once and won't shrink/grow when
+        // the bar text is toggled, clipping the icon and cutting the text.
+        Layout.minimumWidth: implicitWidth
+        Layout.maximumWidth: implicitWidth
 
         clip: true
 

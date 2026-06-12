@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Settings changes now apply instantly on OK/Apply instead of waiting for a
+  slow network refetch. Display-only toggles (show bar text, show account
+  email) update `root.settings` locally; pinning and provider reordering use
+  a fast local cache recompute; only `allAccounts`/`statusPages`/`noCredits`
+  trigger a network refetch.
+- Toggling "show bar text" no longer takes effect before OK/Apply — pending
+  changes stay pending and the live bar is untouched until applied.
+- Compact panel widget now resizes with its content (`Layout.minimum/maximumWidth`
+  bound to `implicitWidth`), fixing the clipped icon and cut-off text when the
+  bar text was toggled on.
+
 ## 0.1.2 (2026-06-11)
 
 ### Added
