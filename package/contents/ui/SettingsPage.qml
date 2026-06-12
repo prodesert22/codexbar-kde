@@ -481,5 +481,16 @@ QQC2.ScrollView {
                 }
             }
         }
+
+        PlasmaComponents3.Label {
+            Layout.fillWidth: true
+            Layout.topMargin: Kirigami.Units.largeSpacing
+            Layout.bottomMargin: Kirigami.Units.smallSpacing
+            text: "CodexBar KDE " + (root.settings.plasmoidVersion || "?") + " · CLI " + (root.settings.cliVersion || "?")
+            horizontalAlignment: Text.AlignHCenter
+            opacity: 0.55
+            font.pointSize: Kirigami.Theme.smallFont.pointSize
+            elide: Text.ElideRight
+        }
     }
 }

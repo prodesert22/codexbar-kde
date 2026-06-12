@@ -19,7 +19,7 @@ PlasmoidItem {
     property bool showSettings: false
     property bool settingsDirty: false
     property var _pendingChanges: ({})
-    property var settings: ({"providers": [], "pinnableProviders": [], "pinnedProvider": "", "refreshIntervalSeconds": 30, "allAccounts": true, "statusPages": false, "noCredits": false, "showBarText": true, "showAccountEmail": true, "providerOrder": "[]"})
+    property var settings: ({"providers": [], "pinnableProviders": [], "pinnedProvider": "", "refreshIntervalSeconds": 30, "allAccounts": true, "statusPages": false, "noCredits": false, "showBarText": true, "showAccountEmail": true, "providerOrder": "[]", "plasmoidVersion": "", "cliVersion": ""})
     property string settingsQuery: ""
     property string helperPath: localFilePath(Qt.resolvedUrl("../code/codexbar_kde.py"))
     property url codexbarIcon: Qt.resolvedUrl("../images/codexbar.png")

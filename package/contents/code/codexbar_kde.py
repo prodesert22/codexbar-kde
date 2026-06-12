@@ -21,6 +21,8 @@ from shutil import which
 from typing import Any, Callable
 
 
+PLASMOID_VERSION = "0.1.2"
+
 DEFAULT_PROVIDERS = ["codex", "claude", "gemini"]
 SOURCE_OVERRIDES = {"codex": "oauth", "claude": "oauth"}
 FALLBACK_SOURCES = {"claude": "cli"}
@@ -551,6 +553,25 @@ def connect_hint(provider_id: str) -> str:
     return hints.get(provider_id, "Enable the provider, configure its credentials in CodexBar, then refresh.")
 
 
+def _get_cli_version(env: Mapping[str, str] | None = None) -> str:
+    """Return the CodexBar CLI version string, or 'unknown' on failure."""
+    try:
+        proc = subprocess.run(
+            [codexbar_binary(env), "--version"],
+            capture_output=True, text=True, timeout=10, check=False,
+            env=dict(env or os.environ),
+        )
+        if proc.returncode == 0 and proc.stdout.strip():
+            version = proc.stdout.strip()
+            # Strip "CodexBar " prefix so the UI can compose its own label
+            if version.startswith("CodexBar "):
+                version = version[len("CodexBar "):]
+            return version
+    except Exception:
+        pass
+    return "unknown"
+
+
 def settings_payload(config_path: Path | None = None, state_path: Path | None = None) -> dict[str, Any]:
     config_path = config_path or paths().config
     configs = provider_config_map(config_path)
@@ -590,6 +611,8 @@ def settings_payload(config_path: Path | None = None, state_path: Path | None = 
         "showBarText": sf.get("showBarText", "true") != "false",
         "providerOrder": sf.get("providerOrder", "[]"),
         "showAccountEmail": sf.get("showAccountEmail", "true") != "false",
+        "plasmoidVersion": PLASMOID_VERSION,
+        "cliVersion": _get_cli_version(),
         "updatedAt": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
     }
 

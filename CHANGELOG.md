@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+- Version info footer on the Settings page showing the plasmoid version
+  (`codexbarkde`) and the CodexBar CLI version (`codexbar --version`).
+
 ### Fixed
 - Settings changes now apply instantly on OK/Apply instead of waiting for a
   slow network refetch. Display-only toggles (show bar text, show account
