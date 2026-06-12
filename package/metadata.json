@@ -11,7 +11,7 @@
     "Id": "dev.codexbar.kde",
     "License": "MIT",
     "Name": "CodexBar KDE",
-    "Version": "0.1.0",
+    "Version": "0.2.0",
     "Website": "https://github.com/steipete/CodexBar"
   },
   "KPackageStructure": "Plasma/Applet",

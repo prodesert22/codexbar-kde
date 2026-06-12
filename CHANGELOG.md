@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-06-12)
 
 ### Added
 - Version info footer on the Settings page showing the plasmoid version

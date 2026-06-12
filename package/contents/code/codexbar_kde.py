@@ -21,7 +21,7 @@ from shutil import which
 from typing import Any, Callable
 
 
-PLASMOID_VERSION = "0.1.2"
+PLASMOID_VERSION = "0.2.0"
 
 DEFAULT_PROVIDERS = ["codex", "claude", "gemini"]
 SOURCE_OVERRIDES = {"codex": "oauth", "claude": "oauth"}
