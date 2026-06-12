@@ -13,6 +13,8 @@
 - Compact panel widget now resizes with its content (`Layout.minimum/maximumWidth`
   bound to `implicitWidth`), fixing the clipped icon and cut-off text when the
   bar text was toggled on.
+- Closing the popup now returns to the usage page; reopening no longer lands on
+  the Settings page, and uncommitted settings changes are discarded.
 
 ## 0.1.2 (2026-06-11)
 

@@ -24,6 +24,16 @@ PlasmoidItem {
     property string helperPath: localFilePath(Qt.resolvedUrl("../code/codexbar_kde.py"))
     property url codexbarIcon: Qt.resolvedUrl("../images/codexbar.png")
 
+    // Closing the popup resets back to the usage page and drops any
+    // uncommitted settings, so reopening never lands on Settings.
+    onExpandedChanged: {
+        if (!expanded) {
+            showSettings = false
+            settingsDirty = false
+            _pendingChanges = {}
+        }
+    }
+
     ListModel {
         id: providerOrderModel
     }
